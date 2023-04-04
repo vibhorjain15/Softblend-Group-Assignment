@@ -1,0 +1,33 @@
+provider "aws" {
+  region = "ap-south-1"
+}
+
+resource "aws_instance" "example" {
+  ami           = "ami-03a933af70fa97ad2" # Ubuntu 20.04 LTS
+  instance_type = "t2.micro"
+
+  vpc_security_group_ids = [
+    aws_security_group.allow_ssh.id
+  ]
+
+  tags = {
+    Name = "My EC2 Instance"
+  }
+
+# Use the default VPC
+  subnet_id = "${aws_default_subnet.default.id}"
+
+}
+
+resource "aws_default_subnet" "default" {}
+
+resource "aws_security_group" "allow_ssh" {
+  name_prefix = "allow_ssh"
+  
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
