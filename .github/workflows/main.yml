@@ -13,8 +13,8 @@ jobs:
       # Step 1: Checkout code
       - uses: actions/checkout@v2
       
-      - name: Install Docker
-        uses: docker/setup-docker@v1
+     # - name: Install Docker
+     #   uses: docker/setup-docker@v1
      
       - name: Start ZAP Docker container
         run: |
