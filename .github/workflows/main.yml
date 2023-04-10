@@ -19,7 +19,8 @@ jobs:
         
       - name: ZAP Scan
         run: |
-          docker exec zap zap-cli quick-scan -s xss,sqli -t https://insmeal.com
+          docker exec zap python /zap/zap-cli.py quick-scan -s xss,sqli -t https://insmeal.com/
+
         
       - name: Copy ZAP report to runner
         run: docker cp zap:/zap/wrk/insmeal.com/report.html .
