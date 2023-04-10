@@ -23,7 +23,7 @@ jobs:
         
       - name: Install zap-cli
         run: |
-          docker exec zap bash -c "sudo apt-get update && sudo apt-get install -y python3 python3-pip && sudo pip3 install python-owasp-zap-v2.4"  
+          docker exec -it --privileged zap /bin/bash -c "sudo apt-get update && sudo apt-get install -y python3 python3-pip && sudo pip3 install python-owasp-zap-v2.4"  
       
       - name: ZAP Scan
         run: |
