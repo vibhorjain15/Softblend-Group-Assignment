@@ -15,7 +15,7 @@ jobs:
       
       - name: Start ZAP Docker container
         run: |
-          #docker run --name zap -u zap -p 8080:8080 -d owasp/zap2docker-weekly zap.sh -daemon -port 8080
+          # docker run --name zap -u zap -p 8080:8080 -d owasp/zap2docker-weekly zap.sh -daemon -port 8080
           docker run --name zap -d -p 8080:8080 owasp/zap2docker-stable zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true
       
       - name: Install zap-cli
@@ -23,11 +23,11 @@ jobs:
         
       - name: Install zap-cli
         run: |
-          sudo docker exec zap sh -c "pip3 install python-owasp-zap-v2.4"  
+          docker exec zap sh -c "apt-get update && apt-get install -y python-pip && pip install --upgrade setuptools && pip install python-owasp-zap-v2.4"  
       
       - name: ZAP Scan
         run: |
-          #docker exec zap zap-cli quick-scan -s xss,sqli -t https://insmeal.com/
+          # docker exec zap zap-cli quick-scan -s xss,sqli -t https://insmeal.com/
           docker exec zap zap-cli quick-scan --spider -r -o report.html https://insmeal.com
 
         
