@@ -10,18 +10,21 @@ jobs:
   zap-scan:
     runs-on: ubuntu-latest
     steps:
-    - name: Start ZAP Docker container
-      run: |
-        docker run --name zap -u zap -p 8080:8080 -d owasp/zap2docker-stable zap.sh -daemon -port 8080
-        
-    - name: ZAP Scan
-      run: |
-        docker exec zap zap-cli quick-scan -s xss,sqli -t https://insmeal.com
-        
-    - name: Copy ZAP report to runner
-      run: docker cp zap:/zap/wrk/insmeal.com/report.html .
+      # Step 1: Checkout code
+      - uses: actions/checkout@v2
       
-    - name: Stop ZAP Docker container
-      run: docker stop zap
+      - name: Start ZAP Docker container
+        run: |
+          docker run --name zap -u zap -p 8080:8080 -d owasp/zap2docker-weekly zap.sh -daemon -port 8080
+        
+      - name: ZAP Scan
+        run: |
+          docker exec zap zap-cli quick-scan -s xss,sqli -t https://insmeal.com
+        
+      - name: Copy ZAP report to runner
+        run: docker cp zap:/zap/wrk/insmeal.com/report.html .
+      
+      - name: Stop ZAP Docker container
+        run: docker stop zap
 
 
