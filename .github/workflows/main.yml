@@ -19,7 +19,11 @@ jobs:
           docker run --name zap -d -p 8080:8080 owasp/zap2docker-stable zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true
       
       - name: Install zap-cli
-        run: sudo docker exec zap sh -c "apk update && apk add python3 py3-pip && pip3 install python-owasp-zap-v2.4"  
+        run: sudo apt-get update && sudo apt-get install -y python3 python3-pip
+        
+      - name: Install zap-cli
+        run: |
+          sudo docker exec zap sh -c "pip3 install python-owasp-zap-v2.4"  
       
       - name: ZAP Scan
         run: |
