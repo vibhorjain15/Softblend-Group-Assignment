@@ -7,37 +7,21 @@ on:
   workflow_dispatch:
   
 jobs:
-  build:
+  zap-scan:
     runs-on: ubuntu-latest
     steps:
-    - name: Install OWASP ZAP
+    - name: Start ZAP Docker container
       run: |
-        sudo apt-get update
-        sudo apt-get install -y zaproxy
-        
-    - name: Configure ZAP Proxy
-      run: |
-        zap.sh -daemon -port 8080
+        docker run --name zap -u zap -p 8080:8080 -d owasp/zap2docker-stable zap.sh -daemon -port 8080
         
     - name: ZAP Scan
       run: |
-        # Start ZAP scan
-        session_id=$(curl -s http://localhost:8080/JSON/core/action/newSession/ | jq -r '.session')
-        scan_url="http://localhost:8080/JSON/ascan/action/scan/?zapapiformat=JSON&url=https://insmeal.com/&recurse=&inScopeOnly="
-        scan_id=$(curl -s $scan_url | jq -r '.scan')
-    
-        # Wait for ZAP to complete the scan
-        status="0"
-        while [ "$status" != "100" ]
-        do
-            status=$(curl -s "http://localhost:8080/JSON/ascan/view/status/?scanId=$scan_id&zapapiformat=JSON" | jq -r '.status')
-            echo "Scan status: $status"
-            sleep 5
-        done
-    
-        # Generate ZAP report
-        report_url="http://localhost:8090/JSON/core/view/report/?reportId=0&format=JSON"
-        report=$(curl -s $report_url)
-        echo "$report"
+        docker exec zap zap-cli quick-scan -s xss,sqli -t https://insmeal.com
+        
+    - name: Copy ZAP report to runner
+      run: docker cp zap:/zap/wrk/insmeal.com/report.html .
+      
+    - name: Stop ZAP Docker container
+      run: docker stop zap
 
 
