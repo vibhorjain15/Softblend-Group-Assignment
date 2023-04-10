@@ -19,7 +19,7 @@ jobs:
           docker run --name zap -d -p 8080:8080 owasp/zap2docker-stable zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true
       
       - name: Install zap-cli
-        run: docker exec zap apt-get update && apt-get install -y zaproxy  
+        run: sudo docker exec zap apt-get update && apt-get install -y zaproxy  
       
       - name: ZAP Scan
         run: |
